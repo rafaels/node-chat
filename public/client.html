@@ -1,0 +1,34 @@
+<html>
+  <body>
+    <h1>Chat com node.js! Woot! :D</h1>
+    <div id="messages"></div>
+
+    <script src="/jquery-1.5.min.js"></script>
+    <script src="/faye.js"></script>
+
+    <form action="/message" method="post" id="send-message">
+      <input name="message"></input>
+    </form>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var client = new Faye.Client('/faye', {
+          timeout: 120
+        });
+
+        client.subscribe('/channel', function(message){
+          $('#messages').append('<p>' + message.text + '</p>');
+        });
+
+        $('#send-message').submit(function(){
+          $.ajax({
+            type: "POST",
+            url: "/message",
+            data: $('#send-message').serialize()
+          });
+          return false;
+        });
+      })
+    </script>
+  </body>
+</html>
